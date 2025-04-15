@@ -1,71 +1,64 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct No {
-    int valor;
-    struct No* prox;
-} No;
+typedef struct {
+    int* dados;
+    int topo;
+    int capacidade;
+} Pilha;
 
-int isEmpty(No* topo) {
-    return topo == NULL;
+Pilha* criarPilha(int capacidade) {
+    Pilha* pilha = (Pilha*)malloc(sizeof(Pilha));
+    pilha->dados = (int*)malloc(sizeof(int) * capacidade);
+    pilha->topo = 0;
+    pilha->capacidade = capacidade;
+    return pilha;
 }
 
-No* push(No* topo, int valor) {
-    No* novo = (No*)malloc(sizeof(No));
-    novo->valor = valor;
-    novo->prox = topo;
-    return novo;
-}
-
-No* pop(No* topo) {
-    if (isEmpty(topo)) {
-        printf("Pilha vazia.\n");
-        return topo;
+void push(Pilha* pilha, int valor) {
+    if (pilha->topo + 1 == pilha->capacidade) {
+        pilha->capacidade *= 2;
+        pilha->dados = realloc(pilha->dados, pilha->capacidade * sizeof(int));
     }
-    No* temp = topo;
-    topo = topo->prox;
-    free(temp);
-    return topo;
+    pilha->dados[++pilha->topo] = valor;
 }
 
-int top(No* topo) {
-    if (isEmpty(topo)) {
-        printf("Pilha vazia.\n");
-        return 0;
-    }
-    return topo->valor;
-}
-
-void limpar(No* topo) {
-    while (!isEmpty(topo)) {
-        topo = pop(topo);
+void pop(Pilha* pilha) {
+    if (pilha->topo >= 0) {
+        pilha->topo--;
     }
 }
 
-void imprimir_pilha(No* topo) {
-    printf("TOPO -> ");
-    while (topo) {
-        printf("%d -> ", topo->valor);
-        topo = topo->prox;
+int top(Pilha* pilha) {
+    if (pilha->topo >= 0) {
+        return pilha->dados[pilha->topo];
     }
-    printf("NULL\n");
+    return 0;
+}
+
+int isEmpty(Pilha* pilha) {
+    return pilha->topo == 0;
+}
+
+void liberarPilha(Pilha* pilha) {
+    free(pilha->dados);
+    free(pilha);
 }
 
 int main() {
-    No* pilha = NULL;
+    Pilha* pilha = criarPilha(4);
 
-    for (int i = 1; i <= 5; i++) {
-        pilha = push(pilha, i);
+    for (int i = 0; i < 10; i++) {
+        push(pilha, i);
     }
 
-    imprimir_pilha(pilha);
-    printf("Topo atual: %d\n", top(pilha));
+    printf("Topo da pilha: %d\n", top(pilha));
 
     while (!isEmpty(pilha)) {
-        printf("Removendo: %d\n", top(pilha));
-        pilha = pop(pilha);
+        printf("Pop: %d\n", top(pilha));
+        pop(pilha);
     }
 
-    limpar(pilha);
+    liberarPilha(pilha);
     return 0;
 }
