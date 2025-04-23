@@ -29,12 +29,9 @@ No* inserir_final(No* lista, int valor){
 }
 
 void imprimir_lista(No* lista) {
-    No* temp = lista;
-     while (temp) {
-        printf("%d -> ", temp->valor);
-        temp = temp->prox;
-    }
-    printf("NULL\n");
+    if(lista == NULL) return;
+    printf("%d", lista->valor);
+    imprimir_lista(lista->prox);
 }
 
 No* excluir_especifico(No* lista, int valor){
